@@ -12,9 +12,6 @@ def segment(X, y):
 	y_t = np.concatenate((y,y,y,y,y))
 	return X_t, y_t
 
-def flip(X, y):
-	return np.fliplr(X), np.array(y)
-
 ###
 # This will retun X but each example the center segment
 ###
