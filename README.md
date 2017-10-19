@@ -1,58 +1,150 @@
-## Project: Build a Traffic Sign Recognition Program
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+#**Traffic Sign Recognition** 
 
-Overview
+##Writeup Template
+
+###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
+
 ---
-In this project, you will use what you've learned about deep neural networks and convolutional neural networks to classify traffic signs. You will train and validate a model so it can classify traffic sign images using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset). After the model is trained, you will then try out your model on images of German traffic signs that you find on the web.
 
-We have included an Ipython notebook that contains further instructions 
-and starter code. Be sure to download the [Ipython notebook](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb). 
+**Build a Traffic Sign Recognition Project**
 
-We also want you to create a detailed writeup of the project. Check out the [writeup template](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup. The writeup can be either a markdown file or a pdf document.
-
-To meet specifications, the project will require submitting three files: 
-* the Ipython notebook with the code
-* the code exported as an html file
-* a writeup report either as a markdown or pdf file 
-
-Creating a Great Writeup
----
-A great writeup should include the [rubric points](https://review.udacity.com/#!/rubrics/481/view) as well as your description of how you addressed each point.  You should include a detailed description of the code used in each step (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
-
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
-
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
-
-The Project
----
 The goals / steps of this project are the following:
-* Load the data set
+* Load the data set (see below for links to the project data set)
 * Explore, summarize and visualize the data set
 * Design, train and test a model architecture
 * Use the model to make predictions on new images
 * Analyze the softmax probabilities of the new images
 * Summarize the results with a written report
 
-### Dependencies
-This lab requires:
 
-* [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit)
+[//]: # (Image References)
 
-The lab environment can be created with CarND Term1 Starter Kit. Click [here](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) for the details.
+[image1]: ./images/class_averages.png "Average image per class"
+[image2]: ./images/class_bars.png "Number of examples/class"
+[image3]: ./images/extras_classified.png "Test Data, green/red for correctly/incorrectly classified"
+[image4]: ./images/extras_color.png "Test Data Unmodified"
+[image5]: ./images/mistakes.png "Examples of missclassified and the top 5 results vs real result"
 
-### Dataset and Repository
 
-1. Download the data set. The classroom has a link to the data set in the "Project Instructions" content. This is a pickled dataset in which we've already resized the images to 32x32. It contains a training, validation and test set.
-2. Clone the project, which contains the Ipython notebook and the writeup template.
-```sh
-git clone https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project
-cd CarND-Traffic-Sign-Classifier-Project
-jupyter notebook Traffic_Sign_Classifier.ipynb
-```
+---
+###Writeup / README
 
-### Requirements for Submission
-Follow the instructions in the `Traffic_Sign_Classifier.ipynb` notebook and write the project report using the writeup template as a guide, `writeup_template.md`. Submit the project code and writeup document.
+Here is a link to my [project code](https://github.com/pcalderw/Traffic-Sign-Classifier/blob/master/Traffic_Sign_Classifier.ipynb)
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+###Data Set Summary & Exploration
+There are 34799 training examples spread out over 43 classes. There is a large spread for the class sizes. We should home to see about 810 per class however, the spread is quite poor for some of them.
 
+![alt text][image2]
+
+See for example "Dangerous Curve to the left" which has the least at 180 examples, or "Speed limit (50km/h)" which has the most at 2010 examples. This means we will probably need to augment these smaller sets to generate more training data. During testing it would also be ideal to test it against either more examples or more complicated examples of these less seen signs.
+
+The statistics were calculated using simple numpy functions.
+
+In order to get a better understanding of each classes approximate image I calculated the average image for each class. Remarkable, they appear to be quite similar to each other. Each sign is near perfectly centered and shown face on. The averages were done after normalizing and grayscale for simplicity of calculation.
+
+![alt text][image1]
+
+###Design and Test a Model Architecture
+
+####1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
+
+Besides nromalization, the easiest augmentation to make was to use grayscale images. As can be seen in the above "Averages" image. The data is quite distinguishable regardless of the loss of color. This cuts the dimensional possibilities quite a lot without losing prceious information. Ideally the structure of the signs is learned instead of the color because it's less susceptible to shadow and illumination problems.
+
+I also increased the training set size by adding small per pixel noise to classes with low number of examples. This beefed up the training set to at least 500/class, or a total of 55017 examples.
+
+
+####2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
+
+My final model consisted of the following layers:
+
+| Layer         		|     Description	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| Input         		| 32x32x1 Grayscale image   							| 
+| Convolution 5x5     	| 1x1 stride, valid padding, outputs 28x28x12 	|
+| RELU					|												|
+| Max pooling	      	| 2x2 stride, outputs 14x14x12 					|
+| Convolution 5x5     	| 1x1 stride, valid padding, outputs 10x10x24 	|
+| Max pooling	    	| 2x2 stride, outputs 5x5x24 					|
+| Flatten				| outputs 600x1									|
+| Dropout				| 50% dropout									|
+| Fully connected		| outputs 400x1									|
+| Dropout				| 50% dropout									|
+| Fully connected		| outputs 120x1									|
+| Fully connected		| outputs 84x1									|
+| Fully connected		| outputs 43x1									|
+| Softmax				| 												|
+|						|												|
+ Each layer adds a Relu as it's activation unless it's not an actual change to the structure just shape. Like Flatten and the dropouts
+
+
+####3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+
+I used the 'tf.train.AdamOptimizer' with a bath size of 128. This was run off a Google Cloud instance with a single Tesla GPU. Training time wasn't signifigantly improved toying with batch size so I felt confident it is close to optimal.
+
+The single largest variable hyperparamters were the two kernel sizes, which I ended up settling somewhere in the midddle of my first choice 6, 16 (from LeNet) and 24, 36 as my largest. The larger ones often failed to converge and require a large learning rate to start which often eventually caused training to diverge and get nowhere near as optimal as the LeNet architecture.
+
+The other parameter with a drastic impact was learning rate. The final value of 0.08 is experimentally chosen. It nearly always resulted in a good convergence and didn't diverge near the end of training.
+
+The final model was chosen as the one with the maximum seen validation accuracy, which tended to be around 30-40 epochs. By around 50-60 it would result in a dramatic loss of performance on both training and validation sets.
+
+####4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+
+My final model results were:
+* training set accuracy of: 97.8%
+* validation set accuracy of: 94.7%
+* test set accuracy of: 91.8%
+
+The first model was a generalized version of LeNet which seemed like a good fit as the data is quite similar to hand digits. The grayscale seem to have much similar internal class structure than digits do so I was certain a network of it's complexity would be acceptable. LeNet' achieved at its peak with a training accuacy of 98%, which is about as accurate as the most overfitted final model architecture's results. However this is only after playing with dataset augmentation. The very first was LeNet with 3 color channels as input and incorrectly computed normalization, which was using int division instead of the appropriate float which was difficult to detect until the more complicated models. After applying grayscale and achieving 90% on training I increased the channel sizes of the conv layers to see if it could generalize better. This increase in complexity resulted in the model only outputting 0, obviously something was wrong.
+
+There were two issues made apparent by this.
+1. The normalization was fixed.
+2. The learning rate was too low for the complexity and it struggled to actually improve. I addressed this by fiddling with this parameter more frequently when a model seemed to be stuck with poor performance. 
+
+Once these issues were resolved the larger channelled LeNet architecture hit 90% on validation. From there I added some the two dropout layers as regularization. Two dropouts ended up working better than just one. This met the minimum of 93% on validation. The dataset augmentation for small classes was just to try to boost it further but I suspect the number of examples was also seen in the training set and it did not add much in terms of performance.
+
+The extra dense layer was added only to allow the last layer not have a dropout just before the logits.
+ 
+
+###Test a Model on New Images
+
+####1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
+
+I pulled these images off Google map's street view in the city of Frankfurt. 
+
+![alt text][[image4]
+
+I provided these instead of the typical search results because they provided better examples of real world data.
+They have additional obstacles to overcome when compared to the training data.
+
+1. They are not strictly centered.
+2. They are skewed by nature of being taken from a moving car instead of face on.
+3. They show extra information.
+	* "No entry" is poorly cropped and cuts off the top
+	* "Vehicles over 3.5 ..." has a second sign below it.
+
+As it turns out it did fairly well in spite of these challenges.
+
+####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+
+Here are the results of the prediction:
+
+| Image			        |     Prediction - Probability 					| 
+|:---------------------:|:---------------------------------------------:| 
+| Speed Limit (30km/h)	| Speed Limit - 0.999							| 
+| Priority road			| Priority road - 1.000							|
+| Vehicles over 3.5 ...	| Vehicles over 3.5 metric - 1.000				|
+| No entry	      		| No entry - 0.999				 				|
+| General caution		| General caution - 0.966						|
+
+
+Remarkably the model was very confident in each example. So not only was it correct, it was certain it was correct.
+
+The accuracy on the test set, for top 5, peaked at 97%. Those last 3 percent are demonstrated below.
+
+
+####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
+
+![alt text][image1]
+
+Notice that for the top 5 classes most of them aren't certain about the top guesses. The left turn being marked as a strong 'traffic signal' is not something I can explain easily. But the others show there is something about the signs that would be a challenge.
+Both speed limit signs are heavily occluded and it seems the grayscale conversion resulted in a very dark image and probably too much detail loss. Likewise, the stop sign is in shadow and at a heavy skew.

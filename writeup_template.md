@@ -23,16 +23,13 @@ The goals / steps of this project are the following:
 [image2]: ./images/class_bars.png "Number of examples/class"
 [image3]: ./images/extras_classified.png "Test Data, green/red for correctly/incorrectly classified"
 [image4]: ./images/extras_color.png "Test Data Unmodified"
+[image5]: ./images/mistakes.png "Examples of missclassified and the top 5 results vs real result"
 
-## Rubric Points
-###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
 ---
 ###Writeup / README
 
-####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
-
-You're reading it! and here is a link to my [project code](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
+Here is a link to my [project code](https://github.com/pcalderw/Traffic-Sign-Classifier/blob/master/Traffic_Sign_Classifier.ipynb)
 
 ###Data Set Summary & Exploration
 There are 34799 training examples spread out over 43 classes. There is a large spread for the class sizes. We should home to see about 810 per class however, the spread is quite poor for some of them.
@@ -90,7 +87,6 @@ The other parameter with a drastic impact was learning rate. The final value of 
 
 The final model was chosen as the one with the maximum seen validation accuracy, which tended to be around 30-40 epochs. By around 50-60 it would result in a dramatic loss of performance on both training and validation sets.
 
-## TODO
 ####4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
 My final model results were:
@@ -126,41 +122,29 @@ They have additional obstacles to overcome when compared to the training data.
 	* "No entry" is poorly cropped and cuts off the top
 	* "Vehicles over 3.5 ..." has a second sign below it.
 
-The first image might be difficult to classify because ...
+As it turns out it did fairly well in spite of these challenges.
 
 ####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
 Here are the results of the prediction:
 
-| Image			        |     Prediction	        					| 
+| Image			        |     Prediction - Probability 					| 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Speed Limit (30km/h)	| Speed Limit - 0.999							| 
+| Priority road			| Priority road - 1.000							|
+| Vehicles over 3.5 ...	| Vehicles over 3.5 metric - 1.000				|
+| No entry	      		| No entry - 0.999				 				|
+| General caution		| General caution - 0.966						|
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+Remarkably the model was very confident in each example. So not only was it correct, it was certain it was correct.
+
+The accuracy on the test set, for top 5, peaked at 97%. Those last 3 percent are demonstrated below.
+
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+![alt text][image1]
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
-
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
-
-
-For the second image ... 
-
-### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
-####1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
-
-
+Notice that for the top 5 classes most of them aren't certain about the top guesses. The left turn being marked as a strong 'traffic signal' is not something I can explain easily. But the others show there is something about the signs that would be a challenge.
+Both speed limit signs are heavily occluded and it seems the grayscale conversion resulted in a very dark image and probably too much detail loss. Likewise, the stop sign is in shadow and at a heavy skew.
