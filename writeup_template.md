@@ -94,31 +94,37 @@ The final model was chosen as the one with the maximum seen validation accuracy,
 ####4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* training set accuracy of: 97.8%
+* validation set accuracy of: 94.7%
+* test set accuracy of: 91.8%
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+The first model was a generalized version of LeNet which seemed like a good fit as the data is quite similar to hand digits. The grayscale seem to have much similar internal class structure than digits do so I was certain a network of it's complexity would be acceptable. LeNet' achieved at its peak with a training accuacy of 98%, which is about as accurate as the most overfitted final model architecture's results. However this is only after playing with dataset augmentation. The very first was LeNet with 3 color channels as input and incorrectly computed normalization, which was using int division instead of the appropriate float which was difficult to detect until the more complicated models. After applying grayscale and achieving 90% on training I increased the channel sizes of the conv layers to see if it could generalize better. This increase in complexity resulted in the model only outputting 0, obviously something was wrong.
 
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
+There were two issues made apparent by this.
+1. The normalization was fixed.
+2. The learning rate was too low for the complexity and it struggled to actually improve. I addressed this by fiddling with this parameter more frequently when a model seemed to be stuck with poor performance. 
+
+Once these issues were resolved the larger channelled LeNet architecture hit 90% on validation. From there I added some the two dropout layers as regularization. Two dropouts ended up working better than just one. This met the minimum of 93% on validation. The dataset augmentation for small classes was just to try to boost it further but I suspect the number of examples was also seen in the training set and it did not add much in terms of performance.
+
+The extra dense layer was added only to allow the last layer not have a dropout just before the logits.
  
 
 ###Test a Model on New Images
 
 ####1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
-Here are five German traffic signs that I found on the web:
+I pulled these images off Google map's street view in the city of Frankfurt. 
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+![alt text][[image4]
+
+I provided these instead of the typical search results because they provided better examples of real world data.
+They have additional obstacles to overcome when compared to the training data.
+
+1. They are not strictly centered.
+2. They are skewed by nature of being taken from a moving car instead of face on.
+3. They show extra information.
+	* "No entry" is poorly cropped and cuts off the top
+	* "Vehicles over 3.5 ..." has a second sign below it.
 
 The first image might be difficult to classify because ...
 
