@@ -127,7 +127,7 @@ The accuracy on the test set, for top 5, peaked at 97%. Those last 3 percent are
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
-![alt text][image1]
+![alt text][image5]
 
 Notice that for the top 5 classes most of them aren't certain about the top guesses. The left turn being marked as a strong 'traffic signal' is not something I can explain easily. But the others show there is something about the signs that would be a challenge.
 Both speed limit signs are heavily occluded and it seems the grayscale conversion resulted in a very dark image and probably too much detail loss. Likewise, the stop sign is in shadow and at a heavy skew.
